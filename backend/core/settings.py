@@ -31,12 +31,14 @@ INSTALLED_APPS = [
     # 3rd party
     "corsheaders",
     # my apps
-    "apps.catalog",
+    "apps.catalog",  # catalog.apps.CatalogConfig
     "apps.messaging",
     "apps.orders",
     "apps.reviews",
     "apps.users",
     "apps.vendors",
+    "apps.addresses",
+    "apps.favorites",
 ]
 
 MIDDLEWARE = [
