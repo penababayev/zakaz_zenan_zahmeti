@@ -1,0 +1,71 @@
+http://127.0.0.1:8000/products
+http://127.0.0.1:8000/products?q=ring&price_min=10&price_max=50
+http://127.0.0.1:8000/products/some-slug
+
+
+Mantıklı devamı ben seçtim ve /categories uçları + CORS’u ekledim. Kısaca neler geldi:
+CORS (FastAPI): api/app.py içine CORSMiddleware eklendi.
+.env’e FRONTEND_ORIGINS (virgülle ayrılmış) verirsen sadece o origin’lere izin verilir.
+Değer yoksa dev için * (tümü) açık.
+Kategoriler (API)
+GET /categories → düz liste (id, name, slug, parent_id)
+GET /categories/tree → ağaç yapısı (children ile nested)
+Eklenen dosyalar (Canvas’ta hazır):
+api/models/category.py — catalog_category tablosunun SQLAlchemy modeli
+api/schemas/category.py — CategoryOut, CategoryNode (recursive)
+api/routers/categories.py — /categories ve /categories/tree
+api/app.py — CORS + router include
+Nasıl denerim?
+.env (opsiyonel):
+FRONTEND_ORIGINS=http://localhost:3000,https://senin-site.vercel.app
+API çalıştır:
+uvicorn api.app:app --reload
+Test et:
+http://127.0.0.1:8000/categories
+http://127.0.0.1:8000/categories/tree
+
+
+
+uvicorn api.app:app --reload
+Sonra:
+http://127.0.0.1:8000/products
+http://127.0.0.1:8000/categories
+http://127.0.0.1:8000/categories/tree
+
+
+
+uvicorn api.app:app --reload
+# Liste
+curl -H "X-User-Id: 1" http://127.0.0.1:8000/favorites
+# Ekle
+curl -X POST -H "Content-Type: application/json" -H "X-User-Id: 1" \
+  -d '{"product_id": 1}' http://127.0.0.1:8000/favorites
+# Sil
+curl -X DELETE -H "X-User-Id: 1" http://127.0.0.1:8000/favorites/1
+
+
+api/routers/orders.py – Uçlar:
+POST /orders → quick order (tek ürün, adet, opsiyonel address_id, opsiyonel shipping)
+GET /orders/{order_id} → sadece siparişi oluşturan kullanıcı görebilir
+api/app.py – orders router’ı eklendi
+İşleyiş notları
+Auth (dev): X-User-Id header’ı zorunlu (JWT’e sonra geçeriz).
+Adres kontrolü: address_id gönderilirse, adresin kullanıcıya ait olduğunu ham SQL ile doğrular; ayrıca siparişe snapshot kopyalanır.
+Ürün durumu: Sadece status='active' ürün sipariş edilebilir.
+Tutarlar: subtotal = unit_price * quantity, total = subtotal + shipping.
+
+Neler kuruldu?
+api/django_compat.py — FastAPI process’inde Django’yu initialize ediyoruz ki check_password kullanabilelim.
+api/models/user.py — auth_user tablosunun minimal SQLAlchemy modeli.
+api/security.py — JWT yardımcıları ve dependency:
+create_access_token(user_id, username) → PyJWT ile HS256 token
+get_current_user_id → Authorization: Bearer token’dan sub’u okur
+authenticate_user(db, username_or_email, password) → Django’nun check_password’ı ile doğrular
+api/routers/auth.py — POST /auth/login:
+body: { "username_or_email": "...", "password": "..." }
+response: { "access_token": "...", "token_type": "bearer" }
+api/app.py — auth router’ı eklendi; CORS korundu.
+JWT config .env ile uyumlu: JWT_SECRET (yoksa DJANGO_SECRET_KEY), JWT_ALGORITHM (HS256), JWT_EXPIRE_MIN (default 120).
+Nasıl denerim?
+Gerekli paket: pip install PyJWT
+API’yi çalıştır:
