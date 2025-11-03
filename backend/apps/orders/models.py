@@ -3,8 +3,8 @@ from django.db import models
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 
-from apps.catalog.models import Product
-from apps.addresses.models import Address
+from backend.apps.catalog.models import Product
+from backend.apps.addresses.models import Address
 
 
 class Order(models.Model):

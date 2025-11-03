@@ -69,3 +69,9 @@ JWT config .env ile uyumlu: JWT_SECRET (yoksa DJANGO_SECRET_KEY), JWT_ALGORITHM 
 Nasıl denerim?
 Gerekli paket: pip install PyJWT
 API’yi çalıştır:
+
+
+api/routers/auth.py → /auth/login (kullanıcı adı/e-posta + şifre → JWT).
+api/security.py → create_access_token, get_current_user_id (Bearer token okur) ve authenticate_user (Django check_password ile doğrular).
+api/django_compat.py → FastAPI sürecinde Django’yu initialize eder (hash kontrolü için).
+api/app.py → auth router’ı dahil ve CORS ayarlı (senin son düzeninle uyumlu).

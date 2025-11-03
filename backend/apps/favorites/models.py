@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from apps.catalog.models import Product
+from backend.apps.catalog.models import Product
 
 
 class Favorite(models.Model):

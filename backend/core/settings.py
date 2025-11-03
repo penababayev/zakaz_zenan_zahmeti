@@ -31,14 +31,14 @@ INSTALLED_APPS = [
     # 3rd party
     "corsheaders",
     # my apps
-    "apps.catalog",  # catalog.apps.CatalogConfig
-    "apps.messaging",
-    "apps.orders",
-    "apps.reviews",
-    "apps.users",
-    "apps.vendors",
-    "apps.addresses",
-    "apps.favorites",
+    "backend.apps.catalog.apps.CatalogConfig",  # catalog.apps.CatalogConfig
+    "backend.apps.messaging.apps.MessagingConfig",
+    "backend.apps.orders.apps.OrdersConfig",
+    "backend.apps.reviews.apps.ReviewsConfig",
+    "backend.apps.users.apps.UsersConfig",
+    "backend.apps.vendors.apps.VendorsConfig",
+    "backend.apps.addresses.apps.AddressesConfig",
+    "backend.apps.favorites.apps.FavoritesConfig",
 ]
 
 MIDDLEWARE = [
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "core.urls"
+ROOT_URLCONF = "backend.core.urls"
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "core.wsgi.application"
+WSGI_APPLICATION = "backend.core.wsgi.application"
 
 
 # Database
@@ -138,5 +138,5 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     # "https://frontend.example.com",
     "http://localhost:8000",
-    "http://localhost:8001",
+    "http://localhost:8002",
 ]

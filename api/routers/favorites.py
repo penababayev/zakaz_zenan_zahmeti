@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..deps import get_db
-from ..auth import get_current_user_id
+from ..security import get_current_user_id
 from ..models.favorite import Favorite
 from ..models.product import Product
 from ..schemas.favorite import FavoriteOut, FavoriteCreate
