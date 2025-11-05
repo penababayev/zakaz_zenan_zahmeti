@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import products, categories, favorites, orders, auth
+from api.routers import products, categories, favorites, orders, auth, seller
 
 app = FastAPI(title="Marketplace API")
 
@@ -32,3 +32,4 @@ app.include_router(products.router)
 app.include_router(categories.router)
 app.include_router(favorites.router)
 app.include_router(orders.router)
+app.include_router(seller.router)
