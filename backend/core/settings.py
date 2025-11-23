@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-secret-key")
 DEBUG = os.getenv("DEBUG", "True") == "True"
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]  # son uytgetmeli bolup biler
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "34.61.30.58"]  # son uytgetmeli bolup biler
 
 
 # Application definition
