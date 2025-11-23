@@ -1,0 +1,12 @@
+myenv
+__pycache__
+*.pyc
+.git
+.gitignore
+docker-compose.yml
+Dockerfile
+.env
+
+
+#Neden?
+#Çünkü docker build . dediğimizde bütün klasörü image içine kopyalamasın, gereksiz dosyalar ve myenv içeriği gitmesin.
