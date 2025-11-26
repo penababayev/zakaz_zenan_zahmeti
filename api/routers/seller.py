@@ -9,6 +9,9 @@ from ..models.product import Product
 from ..models.order import Order, OrderItem
 from ..schemas.product import ProductOut
 from ..schemas.order import OrderOut, OrderItemOut
+from ..models.product_image import ProductImage
+from ..schemas.product_image import ProductImageOut
+
 
 router = APIRouter(prefix="/seller", tags=["seller"])
 
@@ -118,3 +121,58 @@ def seller_order_detail(
     )
     o.items = seller_items  # type: ignore[attr-defined]
     return o
+
+
+@router.get("/products/{product_id}/images", response_model=List[ProductImageOut])
+def product_images(
+    product_id: int,
+    db: Session = Depends(get_db),
+    seller_id: int = Depends(get_current_user_id),
+):
+    """List images for a product owned by the current seller."""
+    prod = (
+        db.query(Product)
+        .filter(Product.id == product_id, Product.seller_id == seller_id)
+        .first()
+    )
+    if not prod:
+        raise HTTPException(status_code=404, detail="Product not found or not yours")
+
+    images = (
+        db.query(ProductImage)
+        .filter(ProductImage.product_id == product_id)
+        .order_by(ProductImage.position.asc(), ProductImage.id.asc())
+        .all()
+    )
+    return images
+
+
+@router.delete(
+    "/products/{product_id}/images/{image_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+def delete_product_image(
+    product_id: int,
+    image_id: int,
+    db: Session = Depends(get_db),
+    seller_id: int = Depends(get_current_user_id),
+):
+    """Delete one image belonging to a product owned by current seller."""
+    prod = (
+        db.query(Product)
+        .filter(Product.id == product_id, Product.seller_id == seller_id)
+        .first()
+    )
+    if not prod:
+        raise HTTPException(status_code=404, detail="Product not found or not yours")
+
+    img = (
+        db.query(ProductImage)
+        .filter(ProductImage.id == image_id, ProductImage.product_id == product_id)
+        .first()
+    )
+    if not img:
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    db.delete(img)
+    db.commit()
+    return None
