@@ -33,6 +33,9 @@ class Product(models.Model):
     is_handmade = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
@@ -46,3 +49,6 @@ class ProductImage(models.Model):
     image = models.ImageField(upload_to="products/")
     alt = models.CharField(max_length=120, blank=True)
     position = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.product.title} - Image {self.position}"
