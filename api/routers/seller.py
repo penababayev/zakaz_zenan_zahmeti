@@ -3,6 +3,7 @@ from typing import List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from ..schemas.product import SellerProductUpdate
 from ..deps import get_db
 from ..security import get_current_user_id
 from ..models.product import Product
@@ -57,6 +58,47 @@ def update_product_minimal(
     for k, v in payload.items():
         if k in allowed:
             setattr(prod, k, v)
+    db.commit()
+    db.refresh(prod)
+    return prod
+
+
+@router.put("/products/{product_id}", response_model=ProductOut)
+def replace_product(
+    product_id: int,
+    payload: SellerProductUpdate,
+    db: Session = Depends(get_db),
+    seller_id: int = Depends(get_current_user_id),
+):
+    """
+    Full update (PUT) for a product owned by the seller.
+
+    Tüm önemli alanlar zorunlu:
+    - title, price, currency, status, is_handmade
+    - description, category_id opsiyonel
+    """
+    prod = (
+        db.query(Product)
+        .filter(Product.id == product_id, Product.seller_id == seller_id)
+        .first()
+    )
+    if not prod:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    # İş kuralları doğrulaması
+    try:
+        payload.validate_status()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    prod.title = payload.title
+    prod.price = payload.price
+    prod.description = payload.description or ""
+    prod.currency = payload.normalized_currency()
+    prod.category_id = payload.category_id
+    prod.status = payload.status
+    prod.is_handmade = payload.is_handmade
+
     db.commit()
     db.refresh(prod)
     return prod

@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import declarative_base, relationship
+from typing import Optional
+from pydantic import BaseModel, Field
 from sqlalchemy.sql import func
 
 Base = declarative_base()
@@ -38,3 +40,22 @@ class ProductImage(Base):
     position = Column(Integer, nullable=False, default=0)
 
     product = relationship("Product", back_populates="images")
+
+
+class SellerProductUpdate(BaseModel):
+    title: str = Field(..., min_length=1, max_length=180)
+    price: float = Field(..., ge=0)
+    description: Optional[str] = Field(None, max_length=10_000)
+    currency: str = Field("EUR", min_length=3, max_length=3)
+    category_id: Optional[int] = None
+    status: str = Field("draft")  # draft / active / paused
+    is_handmade: bool = True
+
+    def validate_status(self):
+        allowed = {"draft", "active", "paused"}
+        if self.status not in allowed:
+            raise ValueError(f"status must be one of {allowed}")
+
+    def normalized_currency(self) -> str:
+        # 3 harfli para birimini hep büyük harfe çevir
+        return self.currency.upper()
