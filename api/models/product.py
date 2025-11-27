@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
 Base = declarative_base()
@@ -24,3 +24,17 @@ class Product(Base):
     is_handmade = Column(Boolean, nullable=False, default=True)
 
     created_at = Column(DateTime, server_default=func.now())
+
+    images = relationship("ProductImage", back_populates="product", lazy="selectin")
+
+
+class ProductImage(Base):
+    __tablename__ = "catalog_productimage"
+
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("catalog_product.id"), nullable=False)
+    image = Column(String, nullable=False)
+    alt = Column(String(120), nullable=True)
+    position = Column(Integer, nullable=False, default=0)
+
+    product = relationship("Product", back_populates="images")
