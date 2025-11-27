@@ -27,7 +27,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/media:/app/media
+      - ./backend/media:/app/backend/media
 
   fastapi:
     build:
