@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from ..schemas.product import SellerProductUpdate
+from ..models.product import SellerProductUpdate
 from ..deps import get_db
 from ..security import get_current_user_id
 from ..models.product import Product
