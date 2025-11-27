@@ -8,6 +8,7 @@ class ProductOut(BaseModel):
     slug: str
     price: Decimal
     currency: str
+    description: str
 
     class Config:
         from_attributes = True
