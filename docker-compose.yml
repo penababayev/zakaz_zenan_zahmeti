@@ -41,6 +41,8 @@ services:
       - .env
     ports:
       - "8001:8001"
+    volumes:
+      - ./backend/media:/app/backend/media
 
 volumes:
   postgres_data:
