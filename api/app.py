@@ -2,6 +2,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from api.routers import products, categories, favorites, orders, auth, seller
 
@@ -10,6 +11,10 @@ app = FastAPI(title="Marketplace API")
 # --- CORS AYARLARI ---
 # Eğer .env içinde FRONTEND_ORIGINS değişkeni varsa (virgülle ayrılmış URL listesi)
 # Örn: FRONTEND_ORIGINS=http://localhost:3000,https://myapp.vercel.app
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MEDIA_DIR = os.path.join(BASE_DIR, "backend", "media")
+app.mount("/media", StaticFiles(directory=MEDIA_DIR), name="media")
+
 origins_env = os.getenv("FRONTEND_ORIGINS")
 
 if origins_env:
