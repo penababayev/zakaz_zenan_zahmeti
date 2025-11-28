@@ -22,6 +22,7 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost", "34.61.30.58"]  # son uytgetmeli bolu
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -143,3 +144,19 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8002",
     "http://localhost:3000",
 ]
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Zenan Zahmeti Admin",
+    "site_header": "Zenan Zahmeti Panel",
+    "site_brand": "Zenan Zahmeti",
+    "welcome_sign": "Hoş geldiňiz 👋",
+    "site_logo": "images/logo.png",  # kullanmayacaksan silebilirsin
+    "theme": "darkly",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "darkly",
+    "accent": "accent-teal",
+    "sidebar_nav_flat_style": True,
+}
