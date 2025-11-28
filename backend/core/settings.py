@@ -155,7 +155,8 @@ JAZZMIN_SETTINGS = {
     "site_header": "Panel",
     "site_brand": "Zenan Zahmeti",
     "welcome_sign": "Hoş geldiňiz 👋",
-    "site_logo": "logo.png",  # kullanmayacaksan silebilirsin
+    "site_logo": "img/logo.png",  # kullanmayacaksan silebilirsin
+    "custom_css": "css/admin.css",
 }
 
 
