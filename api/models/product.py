@@ -15,7 +15,7 @@ class Product(Base):
         Integer, ForeignKey("auth_user.id"), nullable=False
     )  # default User table
     category_id = Column(Integer, ForeignKey("catalog_category.id"))
-    category_name = Column(String(120), ForeignKey("catalog_category.name"))
+    category = relationship("Category", back_populates="products")
 
     title = Column(String(180), nullable=False)
     slug = Column(String(200), unique=True, nullable=False)
@@ -29,6 +29,10 @@ class Product(Base):
     created_at = Column(DateTime, server_default=func.now())
 
     images = relationship("ProductImage", back_populates="product", lazy="selectin")
+
+    @property
+    def category_name(self):
+        return self.category.name if self.category else None
 
 
 class ProductImage(Base):
