@@ -12,7 +12,7 @@ class ProductOut(BaseModel):
     currency: str
     description: str
     images: List["ProductImageOut"] = []
-    category_id: int
+    category_name: str
 
     class Config:
         from_attributes = True

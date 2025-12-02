@@ -15,6 +15,7 @@ class Product(Base):
         Integer, ForeignKey("auth_user.id"), nullable=False
     )  # default User table
     category_id = Column(Integer, ForeignKey("catalog_category.id"))
+    category_name = Column(String(120), ForeignKey("catalog_category.name"))
 
     title = Column(String(180), nullable=False)
     slug = Column(String(200), unique=True, nullable=False)
