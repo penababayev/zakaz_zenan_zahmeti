@@ -12,4 +12,4 @@ class Category(Base):
     name = Column(String(120), nullable=False)
     parent_id = Column(Integer, ForeignKey("catalog_category.id"), nullable=True)
     slug = Column(String(140), unique=True, nullable=False)
-    #products = relationship("Product", back_populates="category") 
+    products = relationship("Product", back_populates="category")
