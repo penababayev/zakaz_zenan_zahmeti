@@ -1,10 +1,9 @@
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel, Field
 from sqlalchemy.sql import func
-
-Base = declarative_base()
+from api.db.base import Base
 
 
 class Product(Base):
