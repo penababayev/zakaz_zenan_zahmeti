@@ -10,14 +10,14 @@ class SellerProfile(models.Model):
     Admin can toggle verification and adjust commission per seller.
     """
 
-    LOCATION_CHOICES = [
-        ("MARY WELAYATY", "Mary welayaty"),
-        ("LEBAP WELAYATY", "Lebap welayaty"),
-        ("DASHOGUZ WELAYATY", "Dashoguz welayaty"),
-        ("BALKAN WELAYATY", "Balkan welayaty"),
-        ("AHAL WELAYATY", "Ahal welayaty"),
-        ("ASHGABAT SHAHERI", "Ashgabat shaheri"),
-    ]
+    # LOCATION_CHOICES = [
+    #     ("MARY WELAYATY", "Mary welayaty"),
+    #     ("LEBAP WELAYATY", "Lebap welayaty"),
+    #     ("DASHOGUZ WELAYATY", "Dashoguz welayaty"),
+    #     ("BALKAN WELAYATY", "Balkan welayaty"),
+    #     ("AHAL WELAYATY", "Ahal welayaty"),
+    #     ("ASHGABAT SHAHERI", "Ashgabat shaheri"),
+    # ]
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -26,7 +26,7 @@ class SellerProfile(models.Model):
     )
     shop_name = models.CharField(max_length=120, unique=True)
     bio = models.TextField(blank=True)
-    location = models.CharField(max_length=255, blank=False, choices=LOCATION_CHOICES)
+    # location = models.CharField(max_length=255, blank=False, choices=LOCATION_CHOICES)
 
     # Commission rate as percentage (e.g., 10.0 = 10%) for future paid flow
     commission_rate = models.DecimalField(
