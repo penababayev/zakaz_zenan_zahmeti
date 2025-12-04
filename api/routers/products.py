@@ -1,7 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-
+from ..schemas.product import ProductDetailOut
 from ..deps import get_db
+from ..security import get_optional_user_id
+from ..models.user import User
+from ..schemas.user import SellerShortOut
+from ..models.product_image import ProductImage
+from ..schemas.product_image import ProductImageOut
+from ..models.favorite import Favorite
 from ..models.product import Product
 from ..schemas.product import ProductOut
 
@@ -48,3 +54,67 @@ def product_detail(slug: str, db: Session = Depends(get_db)):
     if not row:
         raise HTTPException(status_code=404, detail="Product not found")
     return row
+
+
+@router.get("/{product_id}", response_model=ProductDetailOut)
+def product_detail(
+    product_id: int,
+    db: Session = Depends(get_db),
+    user_id: int | None = Depends(get_optional_user_id),
+):
+    """
+    Buyer tarafı için product detay:
+    - seller bilgisi
+    - resimler
+    - is_favorited (login olduysa)
+    """
+    # Sadece aktif ürünleri göster
+    prod = (
+        db.query(Product)
+        .filter(Product.id == product_id, Product.status == "active")
+        .first()
+    )
+    if not prod:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    # Seller bilgisi
+    seller = db.query(User).filter(User.id == prod.seller_id).first()
+    if not seller:
+        raise HTTPException(status_code=500, detail="Seller not found")
+
+    seller_out = SellerShortOut.from_orm(seller)
+
+    # Görseller
+    images = (
+        db.query(ProductImage)
+        .filter(ProductImage.product_id == prod.id)
+        .order_by(ProductImage.position.asc(), ProductImage.id.asc())
+        .all()
+    )
+    images_out = [ProductImageOut.from_orm(img) for img in images]
+
+    # Favori mi?
+    is_fav = False
+    if user_id is not None:
+        fav = (
+            db.query(Favorite)
+            .filter(Favorite.user_id == user_id, Favorite.product_id == prod.id)
+            .first()
+        )
+        is_fav = fav is not None
+
+    return ProductDetailOut(
+        id=prod.id,
+        title=prod.title,
+        slug=prod.slug,
+        description=prod.description,
+        price=prod.price,
+        currency=prod.currency,
+        status=prod.status,
+        is_handmade=prod.is_handmade,
+        category_id=prod.category_id,
+        created_at=prod.created_at,
+        seller=seller_out,
+        images=images_out,
+        is_favorited=is_fav,
+    )

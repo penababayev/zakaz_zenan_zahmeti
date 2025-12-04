@@ -80,3 +80,34 @@ def get_current_user_id(creds: HTTPAuthorizationCredentials = Depends(_bearer)) 
         return int(sub)
     except ValueError:
         raise HTTPException(status_code=401, detail="Invalid subject in token")
+
+
+_optional_bearer = HTTPBearer(auto_error=False)
+
+
+def get_optional_user_id(
+    creds: Optional[HTTPAuthorizationCredentials] = Depends(_optional_bearer),
+) -> Optional[int]:
+    """
+    Token varsa decode et, yoksa None döndür.
+    Product detail gibi public endpoint'lerde kullanacağız.
+    """
+    if creds is None or not creds.credentials:
+        return None
+
+    token = creds.credentials
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALG])
+    except jwt.ExpiredSignatureError:
+        # Burada istersen 401 da atabilirsin; ben şimdilik 'token varsa ama bozuksa' 401 diyorum:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    sub = payload.get("sub")
+    if not sub:
+        raise HTTPException(status_code=401, detail="Invalid token payload")
+    try:
+        return int(sub)
+    except ValueError:
+        raise HTTPException(status_code=401, detail="Invalid subject in token")
