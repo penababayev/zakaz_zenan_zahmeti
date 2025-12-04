@@ -57,7 +57,7 @@ def product_detail(slug: str, db: Session = Depends(get_db)):
 
 
 @router.get("/{product_id}", response_model=ProductDetailOut)
-def product_detail(
+def product_detail_2(
     product_id: int,
     db: Session = Depends(get_db),
     user_id: int | None = Depends(get_optional_user_id),
