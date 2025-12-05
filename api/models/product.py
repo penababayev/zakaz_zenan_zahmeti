@@ -33,6 +33,16 @@ class Product(Base):
     def category_name(self):
         return self.category.name if self.category else None
 
+    def shop_name(self) -> str:
+        if (
+            self.seller
+            and self.seller.seller_profile
+            and self.seller.seller_profile.shop_name
+        ):
+            return self.seller.seller_profile.shop_name
+        # yedek olarak username dön
+        return self.seller.username if self.seller else ""
+
 
 class ProductImage(Base):
     __tablename__ = "catalog_productimage"
