@@ -13,10 +13,9 @@ class Product(Base):
     seller_id = Column(
         Integer, ForeignKey("auth_user.id"), nullable=False
     )  # default User table
-    shop = relationship("Shop", back_populates="products")
     category_id = Column(Integer, ForeignKey("catalog_category.id"))
     category = relationship("Category", back_populates="products")
-
+    seller = relationship("User", back_populates="products")
     title = Column(String(180), nullable=False)
     slug = Column(String(200), unique=True, nullable=False)
     description = Column(String)
@@ -33,9 +32,6 @@ class Product(Base):
     @property
     def category_name(self):
         return self.category.name if self.category else None
-
-    def shop_name(self):
-        return self.shop.shop_name if self.shop else None
 
 
 class ProductImage(Base):

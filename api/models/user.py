@@ -2,6 +2,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from api.db.base import Base
 from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
 
 
 class User(Base):
@@ -16,15 +17,18 @@ class User(Base):
     is_superuser = Column(Boolean, nullable=False, default=False)
     last_login = Column(DateTime)
     date_joined = Column(DateTime)
+    products = relationship("Product", back_populates="seller")
+    seller_profile = relationship("SellerProfile", back_populates="user", uselist=False)
 
 
 class SellerProfile(Base):
     __tablename__ = "profiles_seller"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, nullable=False, unique=True)  # One-to-one with User
+    # user_id = Column(Integer, nullable=False, unique=True)  # One-to-one with User
+    user_id = Column(Integer, ForeignKey("auth_user.id"), unique=True)
     shop_name = Column(String(120), nullable=False, unique=True)
-    products = relationship("Product", back_populates="shop")
+    user = relationship("User", back_populates="seller_profile")
     bio = Column(String)
     location = Column(String(255), nullable=False)
 
