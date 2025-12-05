@@ -44,6 +44,13 @@ class Product(Base):
         # yedek olarak username dön
         return self.seller.username if self.seller else ""
 
+    @property
+    def location(self):
+        sp = getattr(self.seller, "seller_profile", None)
+        if sp and sp.location:
+            return sp.location
+        return None
+
 
 class ProductImage(Base):
     __tablename__ = "catalog_productimage"
