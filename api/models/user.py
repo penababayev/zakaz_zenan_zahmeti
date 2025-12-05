@@ -31,6 +31,7 @@ class SellerProfile(Base):
     user = relationship("User", back_populates="seller_profile")
     bio = Column(String)
     location = Column(String(255), nullable=False)
+    phone_number = Column(String(32), nullable=False)
 
     commission_rate = Column(
         String(5), nullable=False, default="10.00"

@@ -18,6 +18,7 @@ class ProductOut(BaseModel):
     category_name: str | None
     shop_name: str | None
     location: str | None
+    phone_number: str | None
 
     class Config:
         from_attributes = True

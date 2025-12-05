@@ -27,6 +27,9 @@ class SellerProfile(models.Model):
     shop_name = models.CharField(max_length=120, unique=True)
     bio = models.TextField(blank=True)
     location = models.CharField(max_length=255, blank=False, choices=LOCATION_CHOICES)
+    phone_number = models.CharField(
+        max_length=32, blank=False, null=False, help_text="Seller contact phone number"
+    )
 
     # Commission rate as percentage (e.g., 10.0 = 10%) for future paid flow
     commission_rate = models.DecimalField(

@@ -29,7 +29,7 @@ class SellerProfileAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (_("Account"), {"fields": ("user", "is_verified")}),
-        (_("Shop"), {"fields": ("shop_name", "location", "bio")}),
+        (_("Shop"), {"fields": ("shop_name", "location", "phone_number", "bio")}),
         (_("Commerce"), {"fields": ("commission_rate",)}),
         (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
     )

@@ -51,6 +51,13 @@ class Product(Base):
             return sp.location
         return None
 
+    @property
+    def phone_number(self):
+        sp = getattr(self.seller, "seller_profile", None)
+        if sp and sp.phone_number:
+            return sp.phone_number
+        return None
+
 
 class ProductImage(Base):
     __tablename__ = "catalog_productimage"
