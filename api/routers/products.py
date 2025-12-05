@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from ..schemas.product import ProductDetailOut
 from ..deps import get_db
 from ..security import get_optional_user_id
@@ -24,7 +24,14 @@ def list_products(
     limit: int = Query(24, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):
-    query = db.query(Product).filter(Product.status == "active")
+    query = (
+        db.query(Product)
+        .options(
+            selectinload(Product.images),  # Product.images ilişkisinin dolması için
+            selectinload(Product.category),  # category_name property’si için
+        )
+        .filter(Product.status == "active")
+    )
 
     if q:
         ilike = f"%{q}%"
