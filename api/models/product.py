@@ -33,6 +33,7 @@ class Product(Base):
     def category_name(self):
         return self.category.name if self.category else None
 
+    @property
     def shop_name(self) -> str:
         if (
             self.seller
