@@ -9,7 +9,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from . import django_compat  # noqa: F401  # ensure Django is initialized
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 
 from .deps import get_db
 from .models.user import User
@@ -37,6 +37,10 @@ def create_access_token(
 def verify_password(plain: str, hashed: str) -> bool:
     # Use Django's password hasher to verify against auth_user.password
     return check_password(plain, hashed)
+
+
+def hash_password(plain: str) -> str:  # ⬅️ YENİ: Django ile uyumlu hash
+    return make_password(plain)
 
 
 def authenticate_user(
