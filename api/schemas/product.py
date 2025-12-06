@@ -37,7 +37,7 @@ class ProductDetailOut(ProductOut):
     created_at: Optional[datetime] = None
 
     seller: SellerShortOut
-    images: List[ProductImageOut] = []
+    # images: List[ProductImageOut] = []
     is_favorited: bool = False
 
     class Config:
