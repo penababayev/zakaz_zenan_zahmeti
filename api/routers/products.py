@@ -51,16 +51,16 @@ def list_products(
     return rows
 
 
-@router.get("/{slug}", response_model=ProductOut)
-def product_detail(slug: str, db: Session = Depends(get_db)):
-    row = (
-        db.query(Product)
-        .filter(Product.slug == slug, Product.status == "active")
-        .first()
-    )
-    if not row:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return row
+# @router.get("/{slug}", response_model=ProductOut)
+# def product_detail(slug: str, db: Session = Depends(get_db)):
+#     row = (
+#         db.query(Product)
+#         .filter(Product.slug == slug, Product.status == "active")
+#         .first()
+#     )
+#     if not row:
+#         raise HTTPException(status_code=404, detail="Product not found")
+#     return row
 
 
 @router.get("/{product_id}", response_model=ProductDetailOut)
