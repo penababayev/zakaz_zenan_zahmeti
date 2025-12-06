@@ -120,6 +120,10 @@ def product_detail_2(
         status=prod.status,
         is_handmade=prod.is_handmade,
         category_id=prod.category_id,
+        category_name=prod.category_name,  # <-- ekledik
+        shop_name=prod.shop_name,  # <-- ekledik
+        location=prod.location,  # <-- ekledik
+        phone_number=prod.phone_number,  # <-- ekledik
         created_at=prod.created_at,
         seller=seller_out,
         images=images_out,

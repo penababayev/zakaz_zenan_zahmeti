@@ -14,11 +14,11 @@ class ProductOut(BaseModel):
     currency: str
     description: str
     images: List["ProductImageOut"] = []
-    category_id: int | None
-    category_name: str | None
-    shop_name: str | None
-    location: str | None
-    phone_number: str | None
+    category_id: int | None = None
+    category_name: str | None = None
+    shop_name: str | None = None
+    location: str | None = None
+    phone_number: str | None = None
 
     class Config:
         from_attributes = True
