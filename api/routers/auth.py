@@ -1,7 +1,7 @@
 # api/routers/auth.py — login with Django users → JWT
 from fastapi import APIRouter, Depends, HTTPException, status
 from datetime import datetime, timezone
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, ValidationInfo
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from ..deps import get_db
@@ -33,8 +33,8 @@ class SignupInput(BaseModel):
     bio: str | None = None
 
     @field_validator("confirm_password")
-    def passwords_match(cls, v, values):
-        pwd = values.get("password")
+    def passwords_match(cls, v: str, info: ValidationInfo) -> str:
+        pwd = info.data.get("password")
         if pwd is not None and v != pwd:
             raise ValueError("Passwords do not match")
         return v
