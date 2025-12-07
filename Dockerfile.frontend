@@ -1,0 +1,27 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Eğer frontend klasörün "./frontend" ise:
+COPY frontend/package*.json ./
+
+RUN npm ci
+
+COPY frontend/ ./
+
+# Next.js için build
+RUN npm run build
+
+# ---- Runtime image ----
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Builder'dan derlenmiş app'i al
+COPY --from=builder /app ./
+
+EXPOSE 3000
+
+# Next.js ise:
+CMD ["npm", "run", "start"]

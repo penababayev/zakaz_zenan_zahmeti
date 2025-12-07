@@ -44,5 +44,19 @@ services:
     volumes:
       - ./backend/media:/app/backend/media
 
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: zenan_frontend
+    restart: always
+    # Eğer frontend'de .env kullanıyorsan:
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - fastapi
+
 volumes:
   postgres_data:
