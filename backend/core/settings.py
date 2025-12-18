@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-
+#test
 # .env dosyasını yükle
 load_dotenv()
 
