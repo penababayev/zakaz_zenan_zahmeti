@@ -24,18 +24,38 @@ const Header = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (localStorage.getItem("accessToken")) {
-        setIsLoggedIn(true);
-      }
-    }
+    const checkAuth = () => {
+      const token = localStorage.getItem("accessToken");
+      setIsLoggedIn(!!token);
+    };
+
+    checkAuth(); // ilk açılışta kontrol
+
+    // ✅ login/signup/logout sonrası tetiklemek için
+    window.addEventListener("auth-changed", checkAuth);
+
+    return () => {
+      window.removeEventListener("auth-changed", checkAuth);
+    };
   }, []);
 
-  const handleLoginSuccess = () => setIsLoggedIn(true);
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    window.dispatchEvent(new Event("auth-changed"));
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("tokenType");
+    // eski key kullandıysan temizle:
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token_type");
+
     setIsLoggedIn(false);
+    window.dispatchEvent(new Event("auth-changed"));
+
+    router.push("/");
+    router.refresh();
   };
 
   const openAuthChoice = () => setIsAuthChoiceOpen(true);

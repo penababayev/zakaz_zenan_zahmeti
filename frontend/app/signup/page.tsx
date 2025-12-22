@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type SignupPayload = {
   username: string;
@@ -19,6 +20,8 @@ type SignupResponse = {
 };
 
 export default function SignupPage() {
+  const router = useRouter();
+
   const [form, setForm] = useState<SignupPayload>({
     username: "",
     email: "",
@@ -32,18 +35,20 @@ export default function SignupPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://136.115.122.133:8001";
+  const API_BASE =
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://136.115.122.133:8001";
 
-  function onChange<K extends keyof SignupPayload>(key: K, value: SignupPayload[K]) {
+  function onChange<K extends keyof SignupPayload>(
+    key: K,
+    value: SignupPayload[K]
+  ) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setSuccess(null);
 
     if (form.password !== form.confirm_password) {
       setError("Password ve confirm_password aynı olmalı.");
@@ -62,25 +67,48 @@ export default function SignupPage() {
         body: JSON.stringify(form),
       });
 
-      // FastAPI genelde hata detail döndürür; onu yakalayalım
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
+        const d = await res.json().catch(() => null);
         const message =
-          data?.detail
-            ? typeof data.detail === "string"
-              ? data.detail
-              : JSON.stringify(data.detail)
+          d?.detail
+            ? typeof d.detail === "string"
+              ? d.detail
+              : JSON.stringify(d.detail)
             : `Signup failed (${res.status})`;
         throw new Error(message);
       }
 
       const data = (await res.json()) as SignupResponse;
 
-      // Token'ı sakla (istersen cookie de yaparız)
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("token_type", data.token_type);
+      // ✅ token kaydet
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("tokenType", data.token_type ?? "bearer");
 
-      setSuccess("Kayıt başarılı! Token kaydedildi.");
+      // ✅ signup bilgilerini sakla
+      localStorage.setItem(
+        "adminProfile",
+        JSON.stringify({
+          username: form.username,
+          email: form.email,
+          shop_name: form.shop_name,
+          location: form.location,
+          phone_number: form.phone_number,
+          bio: form.bio,
+        })
+      );
+
+      // ✅ Header'ı haberdar et
+      window.dispatchEvent(new Event("auth-changed"));
+
+      // ✅ main page'e git
+      router.replace("/");
+
+      // ✅ garanti fallback (bazen Next navigation takılabiliyor)
+      setTimeout(() => {
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        }
+      }, 50);
     } catch (err: any) {
       setError(err?.message ?? "Bilinmeyen hata");
     } finally {
@@ -90,16 +118,20 @@ export default function SignupPage() {
 
   return (
     <div style={{ maxWidth: 520, margin: "40px auto", padding: 16 }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Signup</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>
+        Signup
+      </h1>
 
       {error && (
-        <div style={{ background: "#ffe5e5", padding: 12, borderRadius: 8, marginBottom: 12 }}>
+        <div
+          style={{
+            background: "#ffe5e5",
+            padding: 12,
+            borderRadius: 8,
+            marginBottom: 12,
+          }}
+        >
           {error}
-        </div>
-      )}
-      {success && (
-        <div style={{ background: "#e7ffe5", padding: 12, borderRadius: 8, marginBottom: 12 }}>
-          {success}
         </div>
       )}
 

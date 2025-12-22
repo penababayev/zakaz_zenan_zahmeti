@@ -13,8 +13,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onClose,
   onLoginSuccess,
 }) => {
-  // Senin projende login endpoint böyleydi:
-  const LOGIN_URL = "/api/auth/login";
+  const API_BASE =
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://136.115.122.133:8001";
+
+  const LOGIN_URL = `${API_BASE}/auth/login`;
 
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -30,28 +32,38 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
       const response = await fetch(LOGIN_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({
-          username_or_email: emailOrUsername,
-          password,
+          username_or_email: emailOrUsername, // ✅ Swagger ile aynı
+          password: password,
         }),
       });
 
       const data = await response.json().catch(() => null);
 
-      if (response.ok) {
-        localStorage.setItem("accessToken", data?.access_token);
-        onLoginSuccess();
-        onClose();
-      } else {
+      if (!response.ok) {
         const message =
           data?.detail
             ? typeof data.detail === "string"
               ? data.detail
               : JSON.stringify(data.detail)
-            : "Giriş bilgileri hatalı. Lütfen tekrar deneyin.";
+            : `Giriş başarısız (${response.status})`;
         setError(message);
+        return;
       }
+
+      // ✅ token kaydet
+      localStorage.setItem("accessToken", data?.access_token);
+      localStorage.setItem("tokenType", data?.token_type ?? "bearer");
+
+      // ✅ Header güncellensin
+      window.dispatchEvent(new Event("auth-changed"));
+
+      onLoginSuccess();
+      onClose();
     } catch {
       setError("Sunucuya bağlanılamadı. Ağ bağlantınızı kontrol edin.");
     } finally {
@@ -94,7 +106,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
             required
           />
 
-          {error && <p className="text-red-600 text-sm mb-3 font-medium">{error}</p>}
+          {error && (
+            <p className="text-red-600 text-sm mb-3 font-medium">{error}</p>
+          )}
 
           <div className="flex justify-between gap-3">
             <button
@@ -113,6 +127,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
             </button>
           </div>
         </form>
+
+        <p className="mt-3 text-xs text-gray-500 break-all">
+          API: {LOGIN_URL}
+        </p>
       </div>
     </div>
   );
