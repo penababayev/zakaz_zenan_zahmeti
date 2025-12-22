@@ -1,7 +1,7 @@
 // app/shop/[id]/page.tsx
 import { Product } from "@/constants/types";
 
-const API_URL = "http://136.115.122.133:8001/products";
+const API_URL = "http://34.30.221.231:8001/products";
 
 function getImg(path: string) {
   return `http://34.10.166.242:8001/media/${path}`;

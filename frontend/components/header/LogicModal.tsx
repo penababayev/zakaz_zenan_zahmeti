@@ -14,7 +14,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onLoginSuccess,
 }) => {
   const API_BASE =
-    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://136.115.122.133:8001";
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://34.30.221.231:8001";
 
   const LOGIN_URL = `${API_BASE}/auth/login`;
 
