@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/products',
-        destination: 'http://34.10.166.242:8001/products',
+        destination: 'http://136.115.122.133:8001/products',
       },
     ];
   },
