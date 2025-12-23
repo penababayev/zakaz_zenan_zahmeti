@@ -37,7 +37,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
 
   const API_BASE =
-    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://34.30.221.231:8001";
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://34.57.59.192:8001";
 
   function onChange<K extends keyof SignupPayload>(
     key: K,
