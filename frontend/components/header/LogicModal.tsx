@@ -14,7 +14,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onLoginSuccess,
 }) => {
   const API_BASE =
-    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://136.115.122.133:8001";
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8001";
 
   const LOGIN_URL = `${API_BASE}/auth/login`;
 
@@ -77,7 +77,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-2xl w-full max-w-sm">
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-2xl font-semibold">🔐 Giriş Yap</h2>
+          <h2 className="text-2xl font-semibold">🔐 Giriş Yapmaly</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-800 transition"
