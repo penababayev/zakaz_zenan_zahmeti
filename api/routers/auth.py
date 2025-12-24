@@ -7,6 +7,7 @@ from sqlalchemy import or_
 from ..deps import get_db
 from ..security import authenticate_user, create_access_token, hash_password
 from ..models.user import User, SellerProfile
+from api.common.enums import LocationEnum
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -28,7 +29,7 @@ class SignupInput(BaseModel):
     password: str
     confirm_password: str
     shop_name: str
-    location: str
+    location: LocationEnum
     phone_number: str
     bio: str | None = None
 
@@ -104,7 +105,7 @@ def signup(payload: SignupInput, db: Session = Depends(get_db)):
         user_id=user.id,
         shop_name=payload.shop_name,
         bio=payload.bio or "",
-        location=payload.location,
+        location=payload.location.value,
         phone_number=payload.phone_number,
         commission_rate="10.00",  # default
         is_verified=False,

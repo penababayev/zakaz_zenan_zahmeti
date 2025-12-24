@@ -2,7 +2,7 @@
 import { Product } from "@/constants/types";
 import ProductsWithFilter from "@/components/CategoryFilter";
 
-const API_URL = "http://34.10.166.242:8001/products";
+const API_URL = "http://136.115.122.133:8001/products";
 
 // Bu sayfanın build sırasında pre-render edilmesini engeller.
 // Böylece API'ye erişilemediğinde Vercel build'i çökmez.

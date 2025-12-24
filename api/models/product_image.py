@@ -1,8 +1,7 @@
 # api/models/product_image.py
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base
-
-Base = declarative_base()
+from api.db.base import Base
+from sqlalchemy.orm import relationship
 
 
 class ProductImage(Base):
@@ -15,3 +14,4 @@ class ProductImage(Base):
     )  # e.g. "products/abc.jpg" (relative to MEDIA_ROOT)
     alt = Column(String(120), nullable=True)
     position = Column(Integer, nullable=False, default=0)
+    product = relationship("Product", back_populates="images")

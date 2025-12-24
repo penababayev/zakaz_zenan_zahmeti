@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from api.db.base import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
+from api.common.enums import LocationEnum
 
 
 class User(Base):

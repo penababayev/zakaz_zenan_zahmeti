@@ -59,16 +59,16 @@ class Product(Base):
         return None
 
 
-class ProductImage(Base):
-    __tablename__ = "catalog_productimage"
+# class ProductImage(Base):
+#     __tablename__ = "catalog_productimage"
 
-    id = Column(Integer, primary_key=True)
-    product_id = Column(Integer, ForeignKey("catalog_product.id"), nullable=False)
-    image = Column(String, nullable=False)
-    alt = Column(String(120), nullable=True)
-    position = Column(Integer, nullable=False, default=0)
+#     id = Column(Integer, primary_key=True)
+#     product_id = Column(Integer, ForeignKey("catalog_product.id"), nullable=False)
+#     image = Column(String, nullable=False)
+#     alt = Column(String(120), nullable=True)
+#     position = Column(Integer, nullable=False, default=0)
 
-    product = relationship("Product", back_populates="images")
+#     product = relationship("Product", back_populates="images")
 
 
 class SellerProductUpdate(BaseModel):
