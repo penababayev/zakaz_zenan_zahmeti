@@ -22,6 +22,7 @@ class Product(Base):
 
     price = Column(Numeric(12, 2), nullable=False)
     currency = Column(String(3), nullable=False, default="EUR")
+    stock_quantity = Column(Integer, nullable=False, default=0)
     status = Column(String(10), nullable=False, default="draft")
     is_handmade = Column(Boolean, nullable=False, default=True)
 
