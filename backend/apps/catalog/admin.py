@@ -63,7 +63,7 @@ class ProductAdmin(admin.ModelAdmin):
             _("Basic"),
             {"fields": ("seller", "category", "title", "slug", "description")},
         ),
-        (_("Commerce"), {"fields": ("price", "currency", "status", "is_handmade")}),
+        (_("Commerce"), {"fields": ("price", "currency", "status", "is_handmade", "stock_quantity")}),
         (_("Meta"), {"fields": ("created_at",)}),
     )
 

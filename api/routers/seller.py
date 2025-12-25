@@ -9,7 +9,7 @@ from ..deps import get_db
 from ..security import get_current_user_id
 from ..models.product import Product
 from ..models.order import Order, OrderItem
-from ..schemas.product import ProductOut, SellerProductCreate
+from ..schemas.product import ProductOut, SellerProductCreate, StockUpdate
 from ..schemas.order import OrderOut, OrderItemOut
 from ..models.product_image import ProductImage
 from ..schemas.product_image import ProductImageOut
@@ -85,6 +85,7 @@ def create_product(
         description=payload.description or "",
         price=payload.price,
         currency=(payload.currency or "EUR").upper(),
+        stock_quantity=payload.stock_quantity,
         status=payload.status,
         is_handmade=payload.is_handmade,
     )
@@ -160,6 +161,29 @@ def replace_product(
     db.commit()
     db.refresh(prod)
     return prod
+
+
+
+@router.patch("/products/{product_id}/stock", response_model=ProductOut)
+def update_stock(
+    product_id: int,
+    payload: StockUpdate,
+    db: Session = Depends(get_db),
+    seller_id: int = Depends(get_current_user_id),
+):
+    prod = (
+        db.query(Product)
+        .filter(Product.id == product_id, Product.seller_id == seller_id)
+        .first()
+    )
+    if not prod:
+        raise HTTPException(status_code=404, detail="Product not found or not yours")
+
+    prod.stock_quantity = payload.stock_quantity
+    db.commit()
+    db.refresh(prod)
+    return prod
+
 
 
 
