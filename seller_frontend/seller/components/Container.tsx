@@ -1,5 +1,8 @@
 import { cn } from '@/lib/utils';
 import React from 'react'
+import HomeBanner from './HomeBanner';
+import SellerLoginPanel from './LoginPanel';
+import StartSellingSteps from './StartSellingSteps';
 
 const Container = ({
     children, 
@@ -10,7 +13,8 @@ const Container = ({
 }) => {
   return (
     <div className={cn('max-w-screen-xl mx-auto px-4', className)}>
-      {children}
+      <HomeBanner/>
+      <StartSellingSteps/>
     </div>
   )
 }
