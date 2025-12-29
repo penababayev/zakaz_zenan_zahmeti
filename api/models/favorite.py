@@ -1,8 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, UniqueConstraint
 from sqlalchemy.sql import func
-from sqlalchemy.orm import declarative_base
-
-Base = declarative_base()
+from api.db.base import Base
 
 
 class Favorite(Base):

@@ -1,62 +1,138 @@
-# api/routers/favorites.py
-from typing import List
+# # api/routers/favorites.py
+# from typing import List
+# from fastapi import APIRouter, Depends, HTTPException, status
+# from sqlalchemy.orm import Session
+
+# from ..deps import get_db
+# from ..security import get_current_user_id
+# from ..models.favorite import Favorite
+# from ..models.product import Product
+# from ..schemas.favorite import FavoriteOut, FavoriteCreate
+
+# router = APIRouter(prefix="/favorites", tags=["favorites"])
+
+
+# @router.get("", response_model=List[FavoriteOut])
+# def list_favorites(
+#     db: Session = Depends(get_db),
+#     user_id: int = Depends(get_current_user_id),
+# ):
+#     """Return the current user's favorites (most recent first)."""
+#     rows = (
+#         db.query(Favorite)
+#         .filter(Favorite.user_id == user_id)
+#         .order_by(Favorite.id.desc())
+#         .limit(200)
+#         .all()
+#     )
+#     return rows
+
+
+# @router.post("", response_model=FavoriteOut, status_code=status.HTTP_201_CREATED)
+# def add_favorite(
+#     payload: FavoriteCreate,
+#     db: Session = Depends(get_db),
+#     user_id: int = Depends(get_current_user_id),
+# ):
+#     """Idempotent create: if already favorited, return the same row."""
+#     # ensure product exists and is active
+#     prod = (
+#         db.query(Product)
+#         .filter(Product.id == payload.product_id, Product.status == "active")
+#         .first()
+#     )
+#     if not prod:
+#         raise HTTPException(status_code=404, detail="Product not found or inactive")
+
+#     existing = (
+#         db.query(Favorite)
+#         .filter(Favorite.user_id == user_id, Favorite.product_id == payload.product_id)
+#         .first()
+#     )
+#     if existing:
+#         return existing
+
+#     fav = Favorite(user_id=user_id, product_id=payload.product_id)
+#     db.add(fav)
+#     db.commit()
+#     db.refresh(fav)
+#     return fav
+
+
+# @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+# def remove_favorite(
+#     product_id: int,
+#     db: Session = Depends(get_db),
+#     user_id: int = Depends(get_current_user_id),
+# ):
+#     """Remove a product from the current user's favorites. Always returns 204."""
+#     (
+#         db.query(Favorite)
+#         .filter(Favorite.user_id == user_id, Favorite.product_id == product_id)
+#         .delete()
+#     )
+#     db.commit()
+#     return None
+
+
+
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from ..deps import get_db
 from ..security import get_current_user_id
 from ..models.favorite import Favorite
 from ..models.product import Product
-from ..schemas.favorite import FavoriteOut, FavoriteCreate
+from ..schemas.product import ProductOut
 
 router = APIRouter(prefix="/favorites", tags=["favorites"])
 
 
-@router.get("", response_model=List[FavoriteOut])
+@router.get("", response_model=list[ProductOut])
 def list_favorites(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
-    """Return the current user's favorites (most recent first)."""
-    rows = (
-        db.query(Favorite)
-        .filter(Favorite.user_id == user_id)
-        .order_by(Favorite.id.desc())
-        .limit(200)
+    # Favori ürünleri getir (aktif olanlar)
+    products = (
+        db.query(Product)
+        .join(Favorite, Favorite.product_id == Product.id)
+        .options(selectinload(Product.images), selectinload(Product.category))
+        .filter(Favorite.user_id == user_id, Product.status == "active")
+        .order_by(Favorite.created_at.desc())
         .all()
     )
-    return rows
+    return products
 
 
-@router.post("", response_model=FavoriteOut, status_code=status.HTTP_201_CREATED)
+@router.post("/{product_id}", status_code=status.HTTP_201_CREATED)
 def add_favorite(
-    payload: FavoriteCreate,
+    product_id: int,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
-    """Idempotent create: if already favorited, return the same row."""
-    # ensure product exists and is active
+    # ürün var mı ve aktif mi?
     prod = (
         db.query(Product)
-        .filter(Product.id == payload.product_id, Product.status == "active")
+        .filter(Product.id == product_id, Product.status == "active")
         .first()
     )
     if not prod:
-        raise HTTPException(status_code=404, detail="Product not found or inactive")
+        raise HTTPException(status_code=404, detail="Product not found")
 
-    existing = (
+    exists = (
         db.query(Favorite)
-        .filter(Favorite.user_id == user_id, Favorite.product_id == payload.product_id)
+        .filter(Favorite.user_id == user_id, Favorite.product_id == product_id)
         .first()
     )
-    if existing:
-        return existing
+    if exists:
+        return {"detail": "Already favorited"}
 
-    fav = Favorite(user_id=user_id, product_id=payload.product_id)
+    fav = Favorite(user_id=user_id, product_id=product_id)
     db.add(fav)
     db.commit()
-    db.refresh(fav)
-    return fav
+    return {"detail": "Added to favorites"}
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -65,11 +141,15 @@ def remove_favorite(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
-    """Remove a product from the current user's favorites. Always returns 204."""
-    (
+    fav = (
         db.query(Favorite)
         .filter(Favorite.user_id == user_id, Favorite.product_id == product_id)
-        .delete()
+        .first()
     )
+    if not fav:
+        # idempotent: yoksa da 204 dönelim
+        return None
+
+    db.delete(fav)
     db.commit()
     return None

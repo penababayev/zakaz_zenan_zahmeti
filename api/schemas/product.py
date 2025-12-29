@@ -25,14 +25,14 @@ class ProductOut(BaseModel):
         from_attributes = True
 
 
-class SellerProductCreate(BaseModel):
-    title: str = Field(..., min_length=1, max_length=180)
-    price: float = Field(..., ge=0)
-    description: str = ""
-    currency: str = Field("EUR", min_length=3, max_length=3)
-    category_id: Optional[int] = None
-    status: str = Field("draft")   # draft/active/paused
-    is_handmade: bool = True
+# class SellerProductCreate(BaseModel):
+#     title: str = Field(..., min_length=1, max_length=180)
+#     price: float = Field(..., ge=0)
+#     description: str = ""
+#     currency: str = Field("EUR", min_length=3, max_length=3)
+#     category_id: Optional[int] = None
+#     status: str = Field("draft")   # draft/active/paused
+#     is_handmade: bool = True
 
 
 class ProductDetailOut(ProductOut):

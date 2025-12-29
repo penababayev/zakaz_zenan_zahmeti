@@ -6,6 +6,9 @@ __pycache__
 docker-compose.yml
 Dockerfile
 .env
+docker-compose.local.yml
+text.txt
+
 
 
 #Neden?

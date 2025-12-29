@@ -33,3 +33,15 @@ class OrderCreateQuick(BaseModel):
     quantity: int = Field(ge=1, default=1)
     address_id: Optional[int] = None
     shipping: Decimal = Field(default=0, ge=0)
+
+
+
+
+class CartItemIn(BaseModel):
+    product_id: int
+    quantity: int = Field(..., ge=1)
+
+class OrderCreateCart(BaseModel):
+    items: List[CartItemIn] = Field(..., min_items=1)
+    shipping: float = Field(0, ge=0)
+    address_id: Optional[int] = None  # sende yoksa kaldır

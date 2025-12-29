@@ -180,6 +180,11 @@ def update_stock(
         raise HTTPException(status_code=404, detail="Product not found or not yours")
 
     prod.stock_quantity = payload.stock_quantity
+
+    # 🔴 stok 0 ise otomatik pause
+    if prod.stock_quantity == 0:
+        prod.status = "paused"
+
     db.commit()
     db.refresh(prod)
     return prod
