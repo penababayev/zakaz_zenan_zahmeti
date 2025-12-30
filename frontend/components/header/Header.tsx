@@ -12,47 +12,37 @@ import { useRouter } from "next/navigation";
 
 import AuthButton from "./AuthButton";
 import AuthChoiceModal from "./AuthChoiceModal";
-import LoginModal from "../header/LogicModal";
+
+const AUTH_EVENT = "auth-changed";
 
 const Header = () => {
   const router = useRouter();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Modals
   const [isAuthChoiceOpen, setIsAuthChoiceOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem("accessToken");
-      setIsLoggedIn(!!token);
+      if (typeof window === "undefined") return;
+      const token = window.localStorage.getItem("accessToken");
+      setIsLoggedIn(Boolean(token));
     };
 
-    checkAuth(); // ilk açılışta kontrol
-
-    // ✅ login/signup/logout sonrası tetiklemek için
-    window.addEventListener("auth-changed", checkAuth);
-
-    return () => {
-      window.removeEventListener("auth-changed", checkAuth);
-    };
+    checkAuth();
+    window.addEventListener(AUTH_EVENT, checkAuth);
+    return () => window.removeEventListener(AUTH_EVENT, checkAuth);
   }, []);
 
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-    window.dispatchEvent(new Event("auth-changed"));
-  };
-
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("tokenType");
-    // eski key kullandıysan temizle:
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("token_type");
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("accessToken");
+      window.localStorage.removeItem("tokenType");
+      window.localStorage.removeItem("access_token");
+      window.localStorage.removeItem("token_type");
+    }
 
     setIsLoggedIn(false);
-    window.dispatchEvent(new Event("auth-changed"));
+    window.dispatchEvent(new Event(AUTH_EVENT));
 
     router.push("/");
     router.refresh();
@@ -62,12 +52,12 @@ const Header = () => {
 
   const chooseLogin = () => {
     setIsAuthChoiceOpen(false);
-    setIsLoginOpen(true);
+    router.push("/auth/login"); // ✅ modal yok, login page var
   };
 
   const chooseSignup = () => {
     setIsAuthChoiceOpen(false);
-    router.push("/signup");
+    router.push("/auth/signup");
   };
 
   return (
@@ -102,12 +92,6 @@ const Header = () => {
         onClose={() => setIsAuthChoiceOpen(false)}
         onChooseLogin={chooseLogin}
         onChooseSignup={chooseSignup}
-      />
-
-      <LoginModal
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
       />
     </>
   );

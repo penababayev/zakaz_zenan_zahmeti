@@ -14,7 +14,11 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onLoginSuccess,
 }) => {
   const API_BASE =
+<<<<<<< HEAD:frontend/components/header/LogicModal11.tsx
     process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8001";
+=======
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://34.57.59.192:8001";
+>>>>>>> origin/frontend/navbar:frontend/components/header/LogicModal.tsx
 
   const LOGIN_URL = `${API_BASE}/auth/login`;
 
