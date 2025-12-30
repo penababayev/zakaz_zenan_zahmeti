@@ -143,3 +143,17 @@ export async function replaceSellerProduct(
   });
 }
 
+// ✅ PATCH /seller/products/{product_id}/stock
+export type PatchSellerProductStockPayload = {
+  stock_quantity: number;
+};
+
+export async function patchSellerProductStock(
+  productId: number,
+  payload: PatchSellerProductStockPayload
+): Promise<SellerProduct> {
+  return request<SellerProduct>(`/seller/products/${productId}/stock`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
