@@ -40,7 +40,6 @@ export default function SignupPage() {
     try {
       setLoading(true);
 
-      // MOCK signup endpoint:
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,18 +60,28 @@ export default function SignupPage() {
         return;
       }
 
-      setSuccessMsg("Kayıt başarılı! Şimdi giriş yapılıyor...");
+      // ✅ Token yaz (mock ise token yoksa bile UI için mock_token yazıyoruz)
+      const accessToken =
+        data?.access_token || data?.accessToken || data?.token || null;
+      const tokenType = data?.token_type || data?.tokenType || "Bearer";
 
-      // İstersen otomatik login (mock login password kuralı: 123456 idi)
-      // Sen signup password ile login yapmak istiyorsan login mock’unu da
-      // db’ye bağlamamız gerekir. Şimdilik basitçe login’e yönlendirelim:
-      setTimeout(() => {
-        router.push("/");
-        router.refresh();
-      }, 600);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("accessToken", accessToken ?? "mock_token");
+        window.localStorage.setItem("tokenType", tokenType);
 
-      // Header’ın güncellenmesi için event:
+        // (opsiyonel) eski key'leri de yaz
+        window.localStorage.setItem("access_token", accessToken ?? "mock_token");
+        window.localStorage.setItem("token_type", tokenType);
+      }
+
+      // ✅ Header güncellensin
       window.dispatchEvent(new Event("auth-changed"));
+
+      setSuccessMsg("Kayıt başarılı! Ana sayfaya yönlendiriliyorsun...");
+
+      // ✅ Home'a geç
+      router.push("/");
+      router.refresh();
     } catch (err: any) {
       setError(err?.message || "Unexpected error");
     } finally {
