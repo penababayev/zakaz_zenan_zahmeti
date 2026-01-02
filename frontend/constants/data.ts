@@ -2,7 +2,7 @@ import { title } from "process";
 
 export const headerData = [
     {title: "Home", href: "/"},
-    {title: "Shop", href: "/shop"},
+    {title: "Shop", href: "/products"},
     {title: "Contact", href: "/contact"},
     {title: "FAQ", href: "/faq"}
 ];

@@ -14,11 +14,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onLoginSuccess,
 }) => {
   const API_BASE =
-<<<<<<< HEAD:frontend/components/header/LogicModal11.tsx
     process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8001";
-=======
-    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://34.57.59.192:8001";
->>>>>>> origin/frontend/navbar:frontend/components/header/LogicModal.tsx
 
   const LOGIN_URL = `${API_BASE}/auth/login`;
 
@@ -41,7 +37,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           Accept: "application/json",
         },
         body: JSON.stringify({
-          username_or_email: emailOrUsername, // ✅ Swagger ile aynı
+          username_or_email: emailOrUsername,
           password: password,
         }),
       });
@@ -59,11 +55,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
         return;
       }
 
-      // ✅ token kaydet
       localStorage.setItem("accessToken", data?.access_token);
       localStorage.setItem("tokenType", data?.token_type ?? "bearer");
 
-      // ✅ Header güncellensin
       window.dispatchEvent(new Event("auth-changed"));
 
       onLoginSuccess();
@@ -132,9 +126,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </div>
         </form>
 
-        <p className="mt-3 text-xs text-gray-500 break-all">
-          API: {LOGIN_URL}
-        </p>
+        <p className="mt-3 text-xs text-gray-500 break-all">API: {LOGIN_URL}</p>
       </div>
     </div>
   );
